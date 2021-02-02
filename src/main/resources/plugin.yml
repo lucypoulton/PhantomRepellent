@@ -5,3 +5,8 @@ api-version: 1.16
 authors: [ __lucyy ]
 description: -- TODO --
 website: https://lucyy.me
+commands:
+  insomnia:
+    usage: /insomnia
+  givepotion:
+    usage: /givepotion <player> <duration>
