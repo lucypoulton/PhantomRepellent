@@ -17,12 +17,19 @@ import java.util.UUID;
 
 public class RepellentEffect extends BukkitRunnable {
     private final int totalDuration;
+
+    public int getLeftDuration() {
+        return leftDuration;
+    }
+
     private int leftDuration;
     private final UUID playerId;
     private final BossBar bar;
     private final EffectManager manager;
     private final NamespacedKey key;
+    private final Cat cat;
 
+    @SuppressWarnings("ConstantConditions")
     public RepellentEffect(EffectManager manager, int totalDuration, UUID playerId, NamespacedKey key) {
         this.totalDuration = totalDuration;
         this.leftDuration = totalDuration;
@@ -31,40 +38,29 @@ public class RepellentEffect extends BukkitRunnable {
         this.key = key;
         bar = Bukkit.createBossBar("title", BarColor.WHITE, BarStyle.SOLID);
         bar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(playerId)));
-        makeCatRidePlayer();
+
+        Player player = Bukkit.getPlayer(playerId);
+
+        cat = (Cat) player.getWorld().spawnEntity(player.getLocation(), EntityType.CAT);
+        cat.setInvisible(true);
+        cat.setSilent(true);
+        cat.setAI(false);
+        cat.setInvulnerable(true);
+        cat.setCollidable(false);
+        cat.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte)1);
     }
 
-    // this is easily the weirdest method name i've ever written
-    @SuppressWarnings("ConstantConditions") // this runnable will be destroyed should the player leave
-    public void makeCatRidePlayer() {
-        Player player = Bukkit.getPlayer(playerId);
-        Cat entity = (Cat) player.getWorld().spawnEntity(player.getLocation(), EntityType.CAT);
-        //entity.setInvisible(true);
-        entity.setSilent(true);
-        entity.setAI(false);
-        entity.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte)1);
-        player.addPassenger(entity);
-    }
-
-    @SuppressWarnings("ConstantConditions") // this runnable will be destroyed should the player leave
-    private void removeRidingCats() {
-        Player player = Bukkit.getPlayer(playerId);
-        for (Entity pass : player.getPassengers()) {
-            if (pass.getPersistentDataContainer().has(key, PersistentDataType.BYTE)) {
-                pass.remove();
-            }
-        }
-    }
 
     @Override
     public void cancel() {
-        removeRidingCats();
+        cat.remove();
         bar.removeAll();
         super.cancel();
 
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void run() {
         leftDuration--;
         if (leftDuration <= 0) {
@@ -73,5 +69,6 @@ public class RepellentEffect extends BukkitRunnable {
         }
         bar.setProgress( (double)leftDuration / (double) totalDuration );
         bar.setTitle("Remaining time " + leftDuration);
+        cat.teleport(Bukkit.getPlayer(playerId).getLocation().add(0, 2, 0));
     }
 }
