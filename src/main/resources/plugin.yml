@@ -3,7 +3,7 @@ version: ${project.version}
 main: me.lucyy.phantomrepellent.PhantomRepellent
 api-version: 1.16
 authors: [ __lucyy ]
-description: -- TODO --
+description: Adds a potion effect preventing phantoms from bothering you
 website: https://lucyy.me
 commands:
   givepotion:
