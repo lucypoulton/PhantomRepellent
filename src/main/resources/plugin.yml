@@ -6,7 +6,7 @@ authors: [ __lucyy ]
 description: -- TODO --
 website: https://lucyy.me
 commands:
-  insomnia:
-    usage: /insomnia
   givepotion:
     usage: /givepotion <player> <duration>
+    permission: phantomrepel.give
+    permission-message: No permission!

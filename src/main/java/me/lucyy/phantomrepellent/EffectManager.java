@@ -1,14 +1,17 @@
 package me.lucyy.phantomrepellent;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -55,10 +58,13 @@ public class EffectManager implements Listener {
         PotionMeta meta = (PotionMeta) item.getItemMeta();
 
         // TODO config values for these params
-        meta.setColor(Color.fromRGB(255, 0, 0));
-        meta.setDisplayName("Phantom Repellent Potion");
+        meta.setColor(Color.fromRGB(255, 216, 41));
+        meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.BOLD + "Ｐｈａｎｔｏｍ Ｒｅｐｅｌｌｅｎｔ Ｐｏｔｉｏｎ");
         meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, duration);
-        meta.setLore(Collections.singletonList("Phantom Repellent " + duration + "sec")); // todo proper format
+        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ENCHANTS);
+        meta.addEnchant(Enchantment.DURABILITY, 1, true);
+        meta.setLore(Collections.singletonList(ChatColor.BLUE + "Phantom Repellent (" +
+				PhantomRepellent.formatTime(duration) + ")"));
 
         item.setItemMeta(meta);
         return item;
@@ -66,6 +72,10 @@ public class EffectManager implements Listener {
 
     @EventHandler
     public void on(PlayerItemConsumeEvent e) {
+    	if (e.getItem().getType() == Material.MILK_BUCKET) {
+    		removeAll(e.getPlayer().getUniqueId());
+    		return;
+		}
         if (e.getItem().getType() != Material.POTION) return;
 
         ItemStack item = e.getItem();

@@ -16,6 +16,7 @@ public class GivePotionCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    	if (args.length != 2) return false;
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) return false;
 
@@ -30,6 +31,6 @@ public class GivePotionCommand implements CommandExecutor {
 
         target.getInventory().addItem(plugin.getManager().getPotion(duration));
         sender.sendMessage("Potion given successfully");
-        return false;
+        return true;
     }
 }

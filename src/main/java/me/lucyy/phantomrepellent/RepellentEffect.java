@@ -1,6 +1,7 @@
 package me.lucyy.phantomrepellent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -36,7 +37,7 @@ public class RepellentEffect extends BukkitRunnable {
         this.playerId = playerId;
         this.manager = manager;
         this.key = key;
-        bar = Bukkit.createBossBar("title", BarColor.WHITE, BarStyle.SOLID);
+        bar = Bukkit.createBossBar("title", BarColor.BLUE, BarStyle.SOLID);
         bar.addPlayer(Objects.requireNonNull(Bukkit.getPlayer(playerId)));
 
         Player player = Bukkit.getPlayer(playerId);
@@ -68,7 +69,7 @@ public class RepellentEffect extends BukkitRunnable {
             return;
         }
         bar.setProgress( (double)leftDuration / (double) totalDuration );
-        bar.setTitle("Remaining time " + leftDuration);
+        bar.setTitle("Your Phantom Repellent Potion has " + PhantomRepellent.formatTime(leftDuration) +  " remaining");
         cat.teleport(Bukkit.getPlayer(playerId).getLocation().add(0, 2, 0));
     }
 }
