@@ -30,7 +30,8 @@ public class GivePotionCommand implements CommandExecutor {
         if (duration <= 0) return false;
 
         target.getInventory().addItem(plugin.getManager().getPotion(duration));
-        sender.sendMessage("Potion given successfully");
+        if (sender != target) sender.sendMessage("Gave a Phantom Repellent to " + target.getName());
+        target.sendMessage("You got a Phantom Repellent!");
         return true;
     }
 }
