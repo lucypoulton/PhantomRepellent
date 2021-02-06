@@ -5,9 +5,11 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -22,14 +24,14 @@ import java.util.*;
 
 public class EffectManager implements Listener {
     private final PhantomRepellent plugin;
+
+
     private final Map<UUID, RepellentEffect> activePlayers = new HashMap<>();
     private final NamespacedKey key;
-    private final NamespacedKey catKey;
 
     public EffectManager(PhantomRepellent plugin) {
         this.plugin = plugin;
         this.key = new NamespacedKey(plugin, "phantom-repellent-duration");
-        this.catKey = new NamespacedKey(plugin, "is-phantom-repellent");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -47,7 +49,7 @@ public class EffectManager implements Listener {
     }
 
     public void give(UUID uuid, int duration) {
-        RepellentEffect effect = new RepellentEffect(this, duration, uuid, catKey);
+        RepellentEffect effect = new RepellentEffect(this, duration, uuid);
         activePlayers.put(uuid, effect);
         effect.runTaskTimer(plugin, 0, 20);
     }
@@ -86,6 +88,13 @@ public class EffectManager implements Listener {
 
         removeAll(e.getPlayer().getUniqueId());
         give(e.getPlayer().getUniqueId(), duration);
+    }
+
+    @EventHandler
+    public void on (EntityTargetLivingEntityEvent e) {
+        if (e.getEntity().getType() != EntityType.PHANTOM || e.getTarget() == null) return;
+        if (!activePlayers.containsKey(e.getTarget().getUniqueId())) return;
+        e.setCancelled(true);
     }
 
     @EventHandler
